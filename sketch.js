@@ -21,7 +21,6 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   voices = PZ.voices;
-  noCursor();
   // collideDebug(true);
   
   // make prism
@@ -45,8 +44,6 @@ function setup() {
   first.tg=255;
   letters.push(first);
   lookup[first.id] = first;
-  
-  credits = new Credits();
 }
 
 function draw() {
@@ -65,15 +62,6 @@ function draw() {
 
   if (letters.length > 60) {
     letters.splice(0, 1);
-  }
-  
-  if (letters.length < 5) {
-    prism.pAlpha--;
-    if (prism.pAlpha < 5) {
-      background(0);
-      credits.display();
-      credits.cAlpha++;
-    }
   }
 }
 
@@ -136,7 +124,7 @@ function Box(cha, x, y, vx, vy, isIn) {
     // rect(this.x, this.y - offset + bbox.h, bbox.w, bbox.h);
     noStroke();
     fill(color(this.tr,this.tg,255, this.tAlpha));
-    this.tAlpha -= 0.5;
+    // this.tAlpha -= 0.5;
     textSize(50);
     textFont(font);
     text(cha, this.x, this.y + bbox.h);
@@ -147,22 +135,22 @@ function Box(cha, x, y, vx, vy, isIn) {
 
   this.detect = function() {
     if (this.hit && !this.isIn) {
-      this.isIn = true;
       
-      if (millis() < 150000) { 
-        prism.pr = random(250);
-        prism.pg = random(255);
-        breed(this.x, this.y, this.vx, this.vy);  
-      } else {
-        PZ.stop();
-      }
+      this.isIn = true;
+
+      prism.pr = random(250);
+      prism.pg = random(255);
+      breed(this.x, this.y, this.vx, this.vy);  
+
       letters.splice(letters.indexOf(lookup[this.id]), 1);
+
     } else if (!this.hit && this.isIn) {
+
       this.isIn = false;
       this.tr=255;
       this.tg=255;
       prism.pr = 255;
-      prism.pg = 255;
+      prism.pg = 255;      
     }
   }
 }
@@ -194,21 +182,6 @@ function speakOut(words) {
   PZ.setRate(random(0.3, 1.3));
   PZ.setVoice(vIndex[v]); //1?,26-,29x,55?
   PZ.speak(words);
-}
-
-function Credits() {
-  this.cAlpha = 0;
-  this.display = function() {
-    noStroke();
-    fill(this.cAlpha);
-    textSize(90);
-    textAlign(CENTER);
-    textLeading(75);
-    text("PRISM\nO", width/2, height*1.3/3);
-    textSize(30);
-    text("by Frances Yuan Wang", width/2, height*1.8/3);
-  }
-  
 }
 
 
